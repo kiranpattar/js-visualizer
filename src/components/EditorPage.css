@@ -132,3 +132,56 @@
 .visualizer-section {
     margin-top: 2rem;
 }
+
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.visualizer-column-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.console-output {
+    width: 100%;
+}
+
+.console-box {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    min-height: 100px;
+    font-family: monospace;
+    border-radius: 4px;
+}
+
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.visualizer-column-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.console-output {
+    width: 100%;
+}
+
+.console-box {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    min-height: 100px;
+    font-family: monospace;
+    border-radius: 4px;
+}
+
