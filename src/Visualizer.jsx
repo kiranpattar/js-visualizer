@@ -1,14 +1,15 @@
-import React from "react";
-
-export default function Visualizer({ logs }) {
+function Visualizer({ logs = [], callStack = [] }) {
   return (
-    <div className="visualizer">
-      <h3>Console Output:</h3>
-      <div style={{ background: "#1e1e1e", color: "#fff", padding: "10px", fontFamily: "monospace" }}>
-        {logs.map((log, idx) => (
-          <pre key={idx} style={{ margin: 0 }}>{log}</pre>
+    <div>
+      <h3>Console Output</h3>
+      <pre>{logs.join("\n")}</pre>
+
+      <h3 style={{ marginTop: "1rem" }}>Call Stack</h3>
+      <ul>
+        {callStack.map((fn, index) => (
+          <li key={index}>🔁 {fn}</li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

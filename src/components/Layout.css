@@ -1,0 +1,92 @@
+/* Layout.css */
+
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+}
+
+.layout-header {
+    background-color: #1e1e2f;
+    padding: 12px 24px;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #ffd369;
+}
+
+.layout-main {
+    flex: 1;
+    display: flex;
+    height: calc(100vh - 56px);
+    /* Adjust for header height */
+}
+
+.content {
+    flex: 3;
+    padding: 24px;
+    background-color: #ffffff;
+    overflow-y: auto;
+    border-right: 1px solid #e0e0e0;
+}
+
+.sidebar-right {
+    flex: 1.2;
+    background: linear-gradient(to bottom right, #e0f7fa, #fff3e0);
+    padding: 20px;
+    border-left: 1px solid #dcdcdc;
+    box-shadow: -3px 0 6px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+    font-size: 15px;
+    color: #333;
+}
+
+.sidebar-right h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #006064;
+    margin-bottom: 12px;
+}
+
+.sidebar-right p {
+    margin: 0 0 10px;
+    line-height: 1.5;
+}
+.nav-bar {
+    background-color: #1f2937;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.nav-bar a {
+    color: #ffffff;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+.nav-bar a:hover {
+    text-decoration: underline;
+    color: #93c5fd;
+}
+
+.main-content {
+    padding: 20px;
+}

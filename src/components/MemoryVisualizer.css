@@ -1,0 +1,36 @@
+.memory-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.top-section {
+    display: flex;
+    gap: 20px;
+}
+
+.memory-block,
+.heap-block {
+    background-color: #f3f3f3;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 120px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.memory-block h4,
+.heap-block h4 {
+    margin-top: 0;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+li {
+    padding: 4px 0;
+    font-family: monospace;
+}

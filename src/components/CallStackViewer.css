@@ -1,0 +1,60 @@
+.callstack-container {
+    padding: 16px;
+    font-family: "Fira Code", monospace;
+    background: #f4f8ff;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.callstack-container h2 {
+    margin-bottom: 12px;
+    color: #3a3a3a;
+}
+
+.stack-box {
+    display: flex;
+    flex-direction: column-reverse;
+    border-left: 4px solid #007acc;
+    padding-left: 12px;
+    gap: 8px;
+}
+
+.stack-frame {
+    background: #e0ecff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 4px solid #005fa3;
+    font-size: 14px;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+}
+
+.stack-empty {
+    font-style: italic;
+    color: #999;
+}
+
+.call-stack-viewer {
+    background-color: #f7f7f7;
+    padding: 1rem;
+    border-left: 1px solid #ddd;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.call-stack-viewer h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.call-stack-viewer ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.call-stack-viewer li {
+    padding: 4px 0;
+    font-family: monospace;
+}
