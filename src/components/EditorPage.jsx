@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Editor from "@monaco-editor/react";
 import MemoryVisualizer from "./MemoryVisualizer";
 
@@ -21,13 +21,13 @@ const defaultCode = `function main() {
 main();`;
 
 const EditorPage = () => {
-  const [code, setCode] = useState(defaultCode);
-  const [consoleOutput, setConsoleOutput] = useState([]);
-  const [callStack, setCallStack] = useState([]);
-  const [microtasks, setMicrotasks] = useState([]);
-  const [macrotasks, setMacrotasks] = useState([]);
-  const [heap, setHeap] = useState([]);
-  const [delayMs, setDelayMs] = useState(500);
+  const [code, setCode] = React.useState(defaultCode);
+  const [consoleOutput, setConsoleOutput] = React.useState([]);
+  const [callStack, setCallStack] = React.useState([]);
+  const [microtasks, setMicrotasks] = React.useState([]);
+  const [macrotasks, setMacrotasks] = React.useState([]);
+  const [heap, setHeap] = React.useState([]);
+  const [delayMs, setDelayMs] = React.useState(500);
 
   const clearAll = () => {
     setConsoleOutput([]);

@@ -1,53 +1,50 @@
 import React from "react";
-import "./MemoryVisualizer.css"; // Optional for styling
 
 const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
   return (
-    <div style={{ marginTop: "2rem" }}>
-      <div className="memory-grid">
-        <div className="memory-box">
-          <h3>📞 Call Stack</h3>
-          <ul>
-            {callStack.length === 0 ? (
-              <li style={{ color: "#999" }}>(empty)</li>
-            ) : (
-              callStack.map((item, idx) => <li key={idx}>{item}</li>)
-            )}
-          </ul>
-        </div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <div>
+        <h4>📞 Call Stack</h4>
+        <ul style={{ border: "1px solid #999", padding: "10px", minHeight: "60px" }}>
+          {callStack.length === 0 ? (
+            <li style={{ color: "#888" }}>Empty</li>
+          ) : (
+            callStack.map((item, index) => <li key={index}>{item}</li>)
+          )}
+        </ul>
+      </div>
 
-        <div className="memory-box">
-          <h3>🦠 Microtasks Queue</h3>
-          <ul>
-            {microtasks.length === 0 ? (
-              <li style={{ color: "#999" }}>(empty)</li>
-            ) : (
-              microtasks.map((item, idx) => <li key={idx}>{item}</li>)
-            )}
-          </ul>
-        </div>
+      <div>
+        <h4>📋 Microtasks Queue</h4>
+        <ul style={{ border: "1px solid #999", padding: "10px", minHeight: "60px" }}>
+          {microtasks.length === 0 ? (
+            <li style={{ color: "#888" }}>Empty</li>
+          ) : (
+            microtasks.map((item, index) => <li key={index}>{item}</li>)
+          )}
+        </ul>
+      </div>
 
-        <div className="memory-box">
-          <h3>🕒 Macrotasks Queue</h3>
-          <ul>
-            {macrotasks.length === 0 ? (
-              <li style={{ color: "#999" }}>(empty)</li>
-            ) : (
-              macrotasks.map((item, idx) => <li key={idx}>{item}</li>)
-            )}
-          </ul>
-        </div>
+      <div>
+        <h4>🕓 Macrotasks Queue</h4>
+        <ul style={{ border: "1px solid #999", padding: "10px", minHeight: "60px" }}>
+          {macrotasks.length === 0 ? (
+            <li style={{ color: "#888" }}>Empty</li>
+          ) : (
+            macrotasks.map((item, index) => <li key={index}>{item}</li>)
+          )}
+        </ul>
+      </div>
 
-        <div className="memory-box memory-heap">
-          <h3>🧠 Heap (Memory)</h3>
-          <ul>
-            {heap.length === 0 ? (
-              <li style={{ color: "#999" }}>(empty)</li>
-            ) : (
-              heap.map((item, idx) => <li key={idx}>{item}</li>)
-            )}
-          </ul>
-        </div>
+      <div>
+        <h4>🧠 Heap</h4>
+        <ul style={{ border: "1px solid #999", padding: "10px", minHeight: "60px" }}>
+          {heap.length === 0 ? (
+            <li style={{ color: "#888" }}>Empty</li>
+          ) : (
+            heap.map((item, index) => <li key={index}>{item}</li>)
+          )}
+        </ul>
       </div>
     </div>
   );
