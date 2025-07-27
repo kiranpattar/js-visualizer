@@ -185,3 +185,20 @@
     border-radius: 4px;
 }
 
+.container {
+    display: flex;
+    height: 60vh;
+    /* Adjust height here */
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.editor-column,
+.visualizer-column {
+    flex: 1;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+}
+
