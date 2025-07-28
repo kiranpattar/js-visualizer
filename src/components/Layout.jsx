@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import "./Layout.css";
-import logo from "../images/logo.png"; // update the path to match your structure
+import logo from "../images/codeNurture.png"; // update the path to match your structure
 
 const Layout = () => {
   return (
