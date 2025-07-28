@@ -56,3 +56,10 @@ ul {
         transform: rotate(360deg);
     }
 }
+
+.section ul {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+

@@ -31,7 +31,7 @@ const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
           <img
             src={eventLoopLogo}
             alt="Event Loop"
-            style={{marginTop:"120px"}}
+            style={{marginTop:"200px"}}
             className={`event-loop-logo ${isRotating ? "rotating" : ""}`}
           />
         </div>
@@ -50,7 +50,7 @@ const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
         </div>
         <div>
           <h4>🕓 Macrotasks Queue</h4>
-          <ul style={{color:"orange"}}>
+          <ul >
             {macrotasks.length === 0 ? (
               <li className="empty">Empty</li>
             ) : (
@@ -63,7 +63,7 @@ const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
       {/* Heap */}
       <div className="section heap">
         <h4>🧠 Heap</h4>
-        <ul style={{color:"orange"}}>
+        <ul>
           {heap.length === 0 ? (
             <li className="empty">Empty</li>
           ) : (
