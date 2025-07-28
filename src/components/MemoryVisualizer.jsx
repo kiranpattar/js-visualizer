@@ -40,7 +40,7 @@ const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
       <div className="section queue">
         <div>
           <h4>📋 Microtasks Queue</h4>
-          <ul>
+          <ul style={{color:"orange"}}>
             {microtasks.length === 0 ? (
               <li className="empty">Empty</li>
             ) : (
@@ -50,7 +50,7 @@ const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
         </div>
         <div>
           <h4>🕓 Macrotasks Queue</h4>
-          <ul>
+          <ul style={{color:"orange"}}>
             {macrotasks.length === 0 ? (
               <li className="empty">Empty</li>
             ) : (
@@ -63,7 +63,7 @@ const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
       {/* Heap */}
       <div className="section heap">
         <h4>🧠 Heap</h4>
-        <ul>
+        <ul style={{color:"orange"}}>
           {heap.length === 0 ? (
             <li className="empty">Empty</li>
           ) : (

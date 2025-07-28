@@ -201,4 +201,32 @@
     border-radius: 8px;
     background: white;
 }
+.editor-page {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    font-family: sans-serif;
+    height: 100vh;
+    /* Ensure it fills the screen */
+    gap: 1rem;
+    box-sizing: border-box;
+}
 
+/* First row: Editor + Visualizer side by side */
+.container {
+    display: flex;
+    height: 45vh;
+    /* Reduce height of first row */
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.editor-column,
+.visualizer-column {
+    flex: 1;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    padding: 0.5rem;
+}

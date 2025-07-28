@@ -2,20 +2,22 @@
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    padding: 20px;
+    padding: 10px;
 }
 
 .section {
     flex: 1;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 5px;
     border-radius: 8px;
+    color:green;
 }
 
 ul {
     list-style: none;
     padding-left: 0;
-    min-height: 30px;
+    min-height: 20px;
+    color:green;
 }
 
 .empty {
@@ -26,7 +28,7 @@ ul {
 .queue {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 }
 
 .event-loop-logo-container {
