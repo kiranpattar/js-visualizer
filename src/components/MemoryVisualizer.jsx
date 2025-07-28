@@ -31,7 +31,7 @@ const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
           <img
             src={eventLoopLogo}
             alt="Event Loop"
-            style={{marginTop:"200px"}}
+            style={{marginTop:"120px"}}
             className={`event-loop-logo ${isRotating ? "rotating" : ""}`}
           />
         </div>
