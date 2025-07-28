@@ -7,7 +7,7 @@ const Layout = () => {
     <div className="layout">
       {/* Navigation Bar */}
       <nav className="nav-bar">
-        <Link to="/">Editor</Link> | <Link to="/docs">Docs</Link> | <Link to="/about">About</Link>
+        <Link to="/">Editor</Link> | <Link to="/docs">Documentation</Link> | <Link to="/about">About</Link>
       </nav>
 
       {/* Main content routed via Outlet */}
