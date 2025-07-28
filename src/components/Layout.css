@@ -89,6 +89,8 @@
 
 .main-content {
     padding: 20px;
+    height: 510px;
+    overflow: scroll;
 }
 
 .nav-bar {

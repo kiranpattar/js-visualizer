@@ -19,6 +19,8 @@ const Layout = () => {
 
   <div className="nav-links">
     <Link to="/">JS Editor</Link> |{" "}
+    <Link to="/docs">HTML Editor</Link> |{" "}
+
     <Link to="/docs">Documentation</Link> |{" "}
     <Link to="/about">About</Link>
   </div>
@@ -28,6 +30,14 @@ const Layout = () => {
       <div className="main-content">
         <Outlet />
       </div>
+       <nav className="nav-bar">
+ 
+  <div className="nav-links">
+    <Link>Location</Link> |{" "}
+    <Link>Contact us</Link> |{" "}
+    <Link>About</Link>
+  </div>
+</nav>
     </div>
   );
 };
