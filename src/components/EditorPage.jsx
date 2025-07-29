@@ -36,47 +36,45 @@ const EditorPage = () => {
   const [heap, setHeap] = React.useState([]);
   const [delayMs, setDelayMs] = React.useState(500);
 
+  const microQueueRef = React.useRef([]);
+  const macroQueueRef = React.useRef([]);
+
   const clearAll = () => {
     setConsoleOutput([]);
     setCallStack([]);
     setMicrotasks([]);
     setMacrotasks([]);
     setHeap([]);
+    microQueueRef.current = [];
+    macroQueueRef.current = [];
   };
 
   const runCodeWithSlowExecution = async () => {
     clearAll();
 
-    const macroQueue = [];
-    const microQueue = [];
     const logs = [];
 
     const fakeConsole = {
-      log: (...args) => {
-  const formatted = args
-    .map((arg) =>
-      typeof arg === "object" ? JSON.stringify(arg, null, 2) : String(arg)
-    )
-    .join(" ");
-  logs.push("console.log: " + formatted);
-  setConsoleOutput((prev) => [...prev, "console.log: " + formatted]);
-}
-
+      log: (msg) => {
+        const log = "console.log: " + msg;
+        logs.push(log);
+        setConsoleOutput((prev) => [...prev, log]);
+      },
     };
 
     const fakeSetTimeout = (cb, time) => {
-      macroQueue.push({ label: "setTimeout", task: cb });
-      setMacrotasks((prev) => [...prev, `setTimeout`]);
+      macroQueueRef.current.push({ label: "setTimeout", task: cb });
+      setMacrotasks([...macroQueueRef.current.map((t) => t.label)]);
     };
 
     const fakeQueueMicrotask = (cb) => {
-      microQueue.push({ label: "queueMicrotask", task: cb });
-      setMicrotasks((prev) => [...prev, `queueMicrotask`]);
+      microQueueRef.current.push({ label: "queueMicrotask", task: cb });
+      setMicrotasks([...microQueueRef.current.map((t) => t.label)]);
     };
 
     const fakeRequestAnimationFrame = (cb) => {
-      macroQueue.push({ label: "requestAnimationFrame", task: cb });
-      setMacrotasks((prev) => [...prev, `requestAnimationFrame`]);
+      macroQueueRef.current.push({ label: "requestAnimationFrame", task: cb });
+      setMacrotasks([...macroQueueRef.current.map((t) => t.label)]);
     };
 
     const createFakePromise = () => {
@@ -89,13 +87,13 @@ const EditorPage = () => {
         _resolve(value) {
           let current = value;
           for (const cb of thenChain) {
-            microQueue.push({
+            microQueueRef.current.push({
               label: "Promise.then",
               task: () => {
                 current = cb(current);
               },
             });
-            setMicrotasks((prev) => [...prev, "Promise.then"]);
+            setMicrotasks([...microQueueRef.current.map((t) => t.label)]);
           }
         },
       };
@@ -104,27 +102,24 @@ const EditorPage = () => {
 
     const fakeFetch = (url) => {
       const promise = createFakePromise();
-      macroQueue.push({
+      macroQueueRef.current.push({
         label: `fetch(${url})`,
         task: () => {
           promise._resolve({ data: `Response from ${url}` });
         },
       });
-      setMacrotasks((prev) => [...prev, `fetch(${url})`]);
+      setMacrotasks([...macroQueueRef.current.map((t) => t.label)]);
       return promise;
     };
 
-    const FakePromise = {
-      resolve: (val) => {
-        const promise = createFakePromise();
-        macroQueue.push({
-          label: "Promise.resolve",
-          task: () => promise._resolve(val),
-        });
-        setMacrotasks((prev) => [...prev, "Promise.resolve"]);
-        return promise;
-      },
-    };
+   const FakePromise = {
+  resolve: (val) => {
+    const promise = createFakePromise();
+    queueMicrotask(() => promise._resolve(val)); // direct microtask instead of macrotask
+    return promise;
+  },
+};
+
 
     try {
       const sandboxed = new Function(
@@ -153,20 +148,24 @@ const EditorPage = () => {
 
     await delay(delayMs);
     setConsoleOutput((prev) => [...prev, "▶️ Executing Microtasks"]);
-    for (const task of microQueue) {
+    while (microQueueRef.current.length > 0) {
+      const task = microQueueRef.current.shift();
       setCallStack([task.label]);
       await delay(delayMs);
       task.task();
+      setMicrotasks([...microQueueRef.current.map((t) => t.label)]);
     }
     setCallStack([]);
     setMicrotasks([]);
     await delay(delayMs);
 
     setConsoleOutput((prev) => [...prev, "▶️ Executing Macrotasks"]);
-    for (const task of macroQueue) {
+    while (macroQueueRef.current.length > 0) {
+      const task = macroQueueRef.current.shift();
       setCallStack([task.label]);
       await delay(delayMs);
       task.task();
+      setMacrotasks([...macroQueueRef.current.map((t) => t.label)]);
     }
     setCallStack([]);
     setMacrotasks([]);

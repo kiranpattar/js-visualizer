@@ -4,14 +4,14 @@ import eventLoopLogo from "../images/loop.png"; // Add your logo to src folder
 
 const MemoryVisualizer = ({ callStack, microtasks, macrotasks, heap }) => {
   const [isRotating, setIsRotating] = useState(false);
-
+  console.log(microtasks,"microtasksmicrotasksmicrotasks")
   useEffect(() => {
     if (callStack.length > 0) {
       setIsRotating(true);
       const timer = setTimeout(() => setIsRotating(false), 1000);
       return () => clearTimeout(timer);
     }
-  }, [callStack]);
+  }, [callStack,microtasks,macrotasks]);
 
   return (
     <div className="memory-visualizer">
