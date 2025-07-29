@@ -15,6 +15,13 @@ const defaultCode = `function main() {
     console.log("Inside Promise");
   });
 
+  fetch("url").then(() => {
+    console.log("First fetch done");
+    return fetch("next");
+  }).then(() => {
+    console.log("Second fetch done");
+  });
+
   console.log("End");
 }
 
@@ -39,50 +46,137 @@ const EditorPage = () => {
 
   const runCodeWithSlowExecution = async () => {
     clearAll();
-    setConsoleOutput(["console.log: Start"]);
-    setCallStack(["main()"]);
-    await delay(delayMs);
 
-    setHeap((prev) => [...prev, "Object: Kiran"]);
-    setConsoleOutput((prev) => [...prev, "console.log: Created object in heap: Kiran"]);
-    await delay(delayMs);
+    const macroQueue = [];
+    const microQueue = [];
+    const logs = [];
 
-    setConsoleOutput((prev) => [...prev, "console.log: End"]);
-    setCallStack([]);
-    await delay(delayMs);
+    const fakeConsole = {
+      log: (...args) => {
+  const formatted = args
+    .map((arg) =>
+      typeof arg === "object" ? JSON.stringify(arg, null, 2) : String(arg)
+    )
+    .join(" ");
+  logs.push("console.log: " + formatted);
+  setConsoleOutput((prev) => [...prev, "console.log: " + formatted]);
+}
 
-    setMicrotasks(["Promise 1", "Promise 2"]);
-    setMacrotasks(["setTimeout 1", "setTimeout 2"]);
-    await delay(delayMs);
+    };
 
-    setConsoleOutput((prev) => [...prev, "Call Stack empty"]);
-    await delay(delayMs);
+    const fakeSetTimeout = (cb, time) => {
+      macroQueue.push({ label: "setTimeout", task: cb });
+      setMacrotasks((prev) => [...prev, `setTimeout`]);
+    };
 
-    setConsoleOutput((prev) => [...prev, "Executing Microtasks..."]);
-    for (let i = 1; i <= 2; i++) {
-      setCallStack([`Promise ${i}`]);
-      setConsoleOutput((prev) => [...prev, `console.log: Promise ${i} resolved`]);
+    const fakeQueueMicrotask = (cb) => {
+      microQueue.push({ label: "queueMicrotask", task: cb });
+      setMicrotasks((prev) => [...prev, `queueMicrotask`]);
+    };
+
+    const fakeRequestAnimationFrame = (cb) => {
+      macroQueue.push({ label: "requestAnimationFrame", task: cb });
+      setMacrotasks((prev) => [...prev, `requestAnimationFrame`]);
+    };
+
+    const createFakePromise = () => {
+      const thenChain = [];
+      const fake = {
+        then(cb) {
+          thenChain.push(cb);
+          return fake;
+        },
+        _resolve(value) {
+          let current = value;
+          for (const cb of thenChain) {
+            microQueue.push({
+              label: "Promise.then",
+              task: () => {
+                current = cb(current);
+              },
+            });
+            setMicrotasks((prev) => [...prev, "Promise.then"]);
+          }
+        },
+      };
+      return fake;
+    };
+
+    const fakeFetch = (url) => {
+      const promise = createFakePromise();
+      macroQueue.push({
+        label: `fetch(${url})`,
+        task: () => {
+          promise._resolve({ data: `Response from ${url}` });
+        },
+      });
+      setMacrotasks((prev) => [...prev, `fetch(${url})`]);
+      return promise;
+    };
+
+    const FakePromise = {
+      resolve: (val) => {
+        const promise = createFakePromise();
+        macroQueue.push({
+          label: "Promise.resolve",
+          task: () => promise._resolve(val),
+        });
+        setMacrotasks((prev) => [...prev, "Promise.resolve"]);
+        return promise;
+      },
+    };
+
+    try {
+      const sandboxed = new Function(
+        "console",
+        "setTimeout",
+        "setInterval",
+        "queueMicrotask",
+        "requestAnimationFrame",
+        "Promise",
+        "fetch",
+        code
+      );
+      sandboxed(
+        fakeConsole,
+        fakeSetTimeout,
+        fakeSetTimeout,
+        fakeQueueMicrotask,
+        fakeRequestAnimationFrame,
+        FakePromise,
+        fakeFetch
+      );
+    } catch (err) {
+      setConsoleOutput((prev) => [...prev, "❌ Error: " + err.message]);
+      return;
+    }
+
+    await delay(delayMs);
+    setConsoleOutput((prev) => [...prev, "▶️ Executing Microtasks"]);
+    for (const task of microQueue) {
+      setCallStack([task.label]);
       await delay(delayMs);
+      task.task();
     }
     setCallStack([]);
     setMicrotasks([]);
-    setConsoleOutput((prev) => [...prev, "Microtasks done"]);
     await delay(delayMs);
 
-    setConsoleOutput((prev) => [...prev, "Executing Macrotasks..."]);
-    for (let i = 1; i <= 2; i++) {
-      setCallStack([`setTimeout ${i}`]);
-      setConsoleOutput((prev) => [...prev, `console.log: setTimeout ${i}`]);
+    setConsoleOutput((prev) => [...prev, "▶️ Executing Macrotasks"]);
+    for (const task of macroQueue) {
+      setCallStack([task.label]);
       await delay(delayMs);
+      task.task();
     }
     setCallStack([]);
     setMacrotasks([]);
-    setConsoleOutput((prev) => [...prev, "Execution Complete ✅"]);
+
+    setConsoleOutput((prev) => [...prev, "✅ Execution Complete"]);
   };
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column", fontFamily: "sans-serif" }}>
-      <h2 style={{ margin: "10px 0 10px 20px" }}>🧠 JS Visualizer with Memory & Call Stack</h2>
+      <h2 style={{ margin: "10px 0 10px 20px" }}>🧐 JS Visualizer with Memory & Call Stack</h2>
 
       <div style={{ padding: "0 20px 10px 20px" }}>
         <label style={{ fontWeight: "bold" }}>
@@ -91,29 +185,12 @@ const EditorPage = () => {
             type="number"
             value={delayMs}
             onChange={(e) => setDelayMs(Number(e.target.value))}
-            style={{
-              width: "100px",
-              marginLeft: "10px",
-              padding: "5px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
+            style={{ width: "100px", marginLeft: "10px", padding: "5px", border: "1px solid #ccc", borderRadius: "4px" }}
           />
         </label>
       </div>
 
-      <div
-        style={{
-          flexGrow: 1,
-          display: "grid",
-          gridTemplateColumns: "50% 50%",
-          gridTemplateRows: "50% 50%",
-          gap: "10px",
-          padding: "0 20px 20px 20px",
-          height: "100%",
-        }}
-      >
-        {/* Code Editor */}
+      <div style={{ flexGrow: 1, display: "grid", gridTemplateColumns: "50% 50%", gridTemplateRows: "50% 50%", gap: "10px", padding: "0 20px 20px 20px", height: "100%" }}>
         <div style={{ border: "1px solid #ddd", borderRadius: "10px", padding: "15px", backgroundColor: "#f8f8f8" }}>
           <h3>💻 Code Editor</h3>
           <Editor
@@ -126,89 +203,30 @@ const EditorPage = () => {
           />
           <button
             onClick={runCodeWithSlowExecution}
-            style={{
-              marginTop: "10px",
-              padding: "8px 16px",
-              fontWeight: "bold",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
+            style={{ marginTop: "10px", padding: "8px 16px", fontWeight: "bold", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
           >
             ▶️ Run Code
           </button>
         </div>
 
-        {/* Memory Visualizer */}
         <div style={{ border: "1px solid #ddd", borderRadius: "10px", padding: "15px", backgroundColor: "#f0f0f0" }}>
           <h3>🧠 Memory + Call Stack</h3>
-          <div
-            style={{
-              padding: "5px",
-              borderRadius: "8px",
-              height: "calc(100% - 80px)",
-              fontSize: "10px",
-              border: "2px dashed #555",
-              backgroundColor: "#fff",
-              overflowY: "auto",
-            }}
-          >
-            <MemoryVisualizer
-              callStack={callStack}
-              microtasks={microtasks}
-              macrotasks={macrotasks}
-              heap={heap}
-            />
+          <div style={{ padding: "5px", borderRadius: "8px", height: "calc(100% - 80px)", fontSize: "10px", border: "2px dashed #555", backgroundColor: "#fff", overflowY: "auto" }}>
+            <MemoryVisualizer callStack={callStack} microtasks={microtasks} macrotasks={macrotasks} heap={heap} />
           </div>
         </div>
 
-        {/* Console Output */}
-        <div
-          style={{
-            backgroundColor: "#1e1e1e",
-            color: "#0f0",
-            height:"150px",
-            padding: "15px",
-            borderRadius: "10px",
-            fontFamily: "monospace",
-            border: "1px solid #444",
-            overflowY: "auto",
-            marginTop:"60px"
-          }}
-        >
+        <div style={{ backgroundColor: "#1e1e1e", color: "#0f0", height: "150px", padding: "15px", borderRadius: "10px", fontFamily: "monospace", border: "1px solid #444", overflowY: "auto", marginTop: "60px" }}>
           <h3 style={{ color: "#fff" }}>📋 Console Output</h3>
-          {consoleOutput.length === 0 ? (
-            <div style={{ color: "#777" }}>No output yet. Run the code!</div>
-          ) : (
-            consoleOutput.map((line, idx) => <div key={idx}>{line}</div>)
-          )}
+          {consoleOutput.length === 0 ? <div style={{ color: "#777" }}>No output yet. Run the code!</div> : consoleOutput.map((line, idx) => <div key={idx}>{line}</div>)}
         </div>
 
-        {/* Logs Only */}
-        <div
-          style={{
-            backgroundColor: "#2a2a2a",
-            height:"150px",
-            marginTop:"60px",
-            color: "#00ff8c",
-            padding: "15px",
-            borderRadius: "10px",
-            fontFamily: "monospace",
-            border: "1px solid #555",
-            overflowY: "auto",
-          }}
-        >
+        <div style={{ backgroundColor: "#2a2a2a", height: "150px", marginTop: "60px", color: "#00ff8c", padding: "15px", borderRadius: "10px", fontFamily: "monospace", border: "1px solid #555", overflowY: "auto" }}>
           <h3 style={{ color: "#fff" }}>📝 Logs</h3>
           {consoleOutput.filter((line) => line.startsWith("console.log")).length === 0 ? (
             <div style={{ color: "#888" }}>No logs yet. Run the code!</div>
           ) : (
-            consoleOutput
-              .filter((line) => line.startsWith("console.log"))
-              .map((line, idx) => (
-                <div key={idx}>{line.replace("console.log: ", "")}</div>
-              ))
+            consoleOutput.filter((line) => line.startsWith("console.log")).map((line, idx) => <div key={idx}>{line.replace("console.log: ", "")}</div>)
           )}
         </div>
       </div>
